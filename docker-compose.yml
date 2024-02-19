@@ -1,0 +1,89 @@
+version: '3.8'
+services:
+  users:
+    build: ./users   
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8001"
+    ports:
+      - "8001:8001"
+    container_name: UsersApi
+    volumes:
+      - ./users/app
+    environment:
+      - USERS_DB_NAME=users
+      - USERS_DB_USER= postgres
+      - USER_DB_PASSWORD= postgres
+      - USER_DB_HOST= usersDB
+
+
+
+    jobs:
+      build: ./jobs   
+      command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8002"
+      ports:
+       - "8002:8002"
+      container_name: JobsApi
+      volumes:
+        - ./jobs/app
+      environment:
+        - JOBS_DB_NAME=jobs
+        - JOBS_DB_USER= postgres
+        - JOBS_DB_PASSWORD= postgres
+        - JOBS_DB_HOST= jobsDB
+
+
+
+
+      blog:
+        build: ./blog
+        command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8003"
+        ports:
+          - "8003:8003"
+        container_name: BlogApi
+        volumes:
+           - ./blog/app
+        environment:
+          - JOBS_DB_NAME=blog
+          - JOBS_DB_USER= postgres
+          - JOBS_DB_PASSWORD= postgres
+          - JOBS_DB_HOST= blogDB
+
+
+
+
+usersDB:
+   image: postgres:15
+   environment:
+     - USERS_DB_NAME=users
+     - USERS_DB_USER= postgres
+     - USER_DB_PASSWORD= postgres
+    
+   volumes:
+      - users_data:/var/lib/postgresql/data
+
+
+   
+jobsDB:
+   image: postgres:15
+   environment:
+     - USERS_DB_NAME=jobs
+     - USERS_DB_USER= postgres
+     - USER_DB_PASSWORD= postgres
+    
+   volumes:
+      - jobs_data:/var/lib/postgresql/data
+
+
+blogDB:
+   image: postgres:15
+   environment:
+     - USERS_DB_NAME=blog
+     - USERS_DB_USER= postgres
+     - USER_DB_PASSWORD= postgres
+    
+   volumes:
+      - blog_data:/var/lib/postgresql/data
+
+
+
+
+
